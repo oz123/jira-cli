@@ -252,6 +252,7 @@ def cli(args=sys.argv[1:]):
                 args = shlex.split(target) + args[1:]
                 break
     parser = build_parser()
+
     try:
         config = Config()
         pre_opts, pre_args = None, None
@@ -277,6 +278,10 @@ def cli(args=sys.argv[1:]):
             not (pre_opts and ("configure" in pre_args or "clear_cache" in pre_args))
         ):
             post_args = parser.parse_args(args)
+            if not hasattr(post_args, 'jira_url'):
+                parser.print_help()
+                sys.exit(1)
+
             jira = initialize(
                 config, post_args.jira_url, post_args.username, post_args.password,
                 persist=not (post_args.username or post_args.jira_url),
